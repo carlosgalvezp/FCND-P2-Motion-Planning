@@ -10,34 +10,37 @@
 3. Define the start and goal locations.
 4. Perform a search using A* or other search algorithm.
 5. Use a collinearity test or ray tracing method (like Bresenham) to remove unnecessary waypoints.
-6. Return waypoints in local ECEF coordinates (format for `self.all_waypoints` is [N, E, altitude, heading], where the drone’s start location corresponds to [0, 0, 0, 0].
+6. Return waypoints in local ECEF coordinates
+   (format for `self.all_waypoints` is [N, E, altitude, heading],
+   where the drone’s start location corresponds to [0, 0, 0, 0].
 7. Write it up.
 8. Congratulations!  Your Done!
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/1534/view) Points
-### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
+### Here I will consider the rubric points individually and describe how Iaddressed each point in my implementation.
 
 ---
 ### Writeup / README
 
-#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  
+#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.
 
 You're reading it! Below I describe how I addressed each rubric point and where in my code each point is handled.
 
 ### Explain the Starter Code
 
 #### 1. Explain the functionality of what's provided in `motion_planning.py` and `planning_utils.py`
-These scripts contain a basic planning implementation that includes...
 
-And here's a lovely image of my results (ok this image has nothing to do with it, but it's a nice example of how to include images in your writeup!)
-![Top Down View](./misc/high_up.png)
+- The `planning_utils.py` script contains utility functions to support the planning implementation.
+  In particular, it provides a function `create_grid` to create a 2D grid with where cells
+  with value 1 are considered as "obstacles". In addition, an implementation of a grid-based
+  A*, `a_star`, is also provided, together with helper functions needed for it, like the heuristic.
 
-Here's | A | Snappy | Table
---- | --- | --- | ---
-1 | `highlight` | **bold** | 7.41
-2 | a | b | c
-3 | *italic* | text | 403
-4 | 2 | 3 | abcd
+- The `motion_planning.py` script is the main entrypoint for this project. The provided code
+  sets up the MAVLink connection with the drone simulator, and implements the different
+  callbacks for state, position and velocity changes. All the state transition functions
+  are also provided. The only thing left to implement for the students is the `plan_path`
+  function, which is executed before taking off, with the aim of setting the `self.waypoints`
+  array for the drone to follow the desired trajectory.
 
 ### Implementing Your Path Planning Algorithm
 
@@ -64,7 +67,7 @@ This step is to add flexibility to the desired goal location. Should be able to 
 #### 5. Modify A* to include diagonal motion (or replace A* altogether)
 Minimal requirement here is to modify the code in planning_utils() to update the A* implementation to include diagonal motions on the grid that have a cost of sqrt(2), but more creative solutions are welcome. Explain the code you used to accomplish this step.
 
-#### 6. Cull waypoints 
+#### 6. Cull waypoints
 For this step you can use a collinearity test or ray tracing method like Bresenham. The idea is simply to prune your path of unnecessary waypoints. Explain the code you used to accomplish this step.
 
 
@@ -74,7 +77,7 @@ For this step you can use a collinearity test or ray tracing method like Bresenh
 It works!
 
 ### Double check that you've met specifications for each of the [rubric](https://review.udacity.com/#!/rubrics/1534/view) points.
-  
+
 # Extra Challenges: Real World Planning
 
 For an extra challenge, consider implementing some of the techniques described in the "Real World Planning" lesson. You could try implementing a vehicle model to take dynamic constraints into account, or implement a replanning method to invoke if you get off course or encounter unexpected obstacles.

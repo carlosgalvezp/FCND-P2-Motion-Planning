@@ -55,6 +55,10 @@ class Action(Enum):
     EAST = (0, 1, 1)
     NORTH = (-1, 0, 1)
     SOUTH = (1, 0, 1)
+    NORTH_WEST = (-1, -1, np.sqrt(2))
+    NORTH_EAST = (-1, 1, np.sqrt(2))
+    SOUTH_WEST = (1, -1, np.sqrt(2))
+    SOUTH_EAST = (1, 1, np.sqrt(2))
 
     @property
     def cost(self):
@@ -69,21 +73,20 @@ def valid_actions(grid, current_node):
     """
     Returns a list of valid actions given a grid and current node.
     """
-    valid_actions = list(Action)
+    all_actions = list(Action)
+    valid_actions = []
     n, m = grid.shape[0] - 1, grid.shape[1] - 1
     x, y = current_node
 
     # check if the node is off the grid or
     # it's an obstacle
+    for action in all_actions:
+        dx, dy = action.delta
+        new_x = x + dx
+        new_y = y + dy
 
-    if x - 1 < 0 or grid[x - 1, y] == 1:
-        valid_actions.remove(Action.NORTH)
-    if x + 1 > n or grid[x + 1, y] == 1:
-        valid_actions.remove(Action.SOUTH)
-    if y - 1 < 0 or grid[x, y - 1] == 1:
-        valid_actions.remove(Action.WEST)
-    if y + 1 > m or grid[x, y + 1] == 1:
-        valid_actions.remove(Action.EAST)
+        if new_x >= 0 and new_x <= n and new_y >= 0 and new_y <= m and grid[new_x, new_y] == 0:
+            valid_actions.append(action)
 
     return valid_actions
 
@@ -136,7 +139,7 @@ def a_star(grid, h, start, goal):
     else:
         print('**********************')
         print('Failed to find a path!')
-        print('**********************') 
+        print('**********************')
     return path[::-1], path_cost
 
 def heuristic(position, goal_position):
