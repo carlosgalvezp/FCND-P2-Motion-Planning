@@ -18,6 +18,8 @@ def create_grid(data, drone_altitude, safety_distance):
     east_min = np.floor(np.min(data[:, 1] - data[:, 4]))
     east_max = np.ceil(np.max(data[:, 1] + data[:, 4]))
 
+    print('n min: {}, n max: {}, e min: {}, e max: {}'.format(north_min, north_max, east_min, east_max))
+
     # given the minimum and maximum coordinates we can
     # calculate the size of the grid.
     north_size = int(np.ceil(north_max - north_min))

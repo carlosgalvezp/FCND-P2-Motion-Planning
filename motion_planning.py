@@ -122,7 +122,7 @@ class MotionPlanning(Drone):
 
         self.target_position[2] = TARGET_ALTITUDE
 
-        # TODO: read lat0, lon0 from colliders into floating point values
+        # Read lat0, lon0 from colliders into floating point values
         lat0 = 0.0
         lon0 = 0.0
         with open(COLLIDERS_CSV, 'r') as csv_file:
@@ -130,7 +130,7 @@ class MotionPlanning(Drone):
             lat0 = float(first_line[0].strip().split(' ')[1])
             lon0 = float(first_line[1].strip().split(' ')[1])
 
-        # TODO: Set home position to (lon0, lat0, 0)
+        # Set home position to (lon0, lat0, 0)
         self.set_home_position(lon0, lat0, 0)
 
         # Retrieve current global position
@@ -148,12 +148,20 @@ class MotionPlanning(Drone):
         print("North offset = {0}, east offset = {1}".format(north_offset, east_offset))
 
         # Convert start position to current position rather than map center
-        grid_start = (-north_offset + int(local_position[0]), -east_offset + int(local_position[1]))
+        grid_start = (int(local_position[0]) - north_offset,
+                      int(local_position[1]) - east_offset)
 
-        # Set goal as some arbitrary position on the grid
-        grid_goal = (grid_start[0] + 10, grid_start[1] + 10)
+        # Set goal as some arbitrary position on in global (GPS) coordinates
+        goal_lon = -122.401242
+        goal_lat = 37.796730
+        global_goal = (goal_lon, goal_lat, 0)
 
-        # TODO: adapt to set goal as latitude / longitude position and convert
+        # Convert to local (NED) coordinates
+        local_goal = global_to_local(global_goal, self.global_home)
+
+        # Convert to grid coordinates
+        grid_goal = (int(local_goal[0]) - north_offset,
+                     int(local_goal[1]) - east_offset)
 
         # Run A* to find a path from start to goal
         print('Local Start and Goal: ', grid_start, grid_goal)
