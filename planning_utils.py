@@ -1,5 +1,6 @@
 from enum import Enum
 from queue import PriorityQueue
+from bresenham import bresenham
 import numpy as np
 
 
@@ -147,3 +148,32 @@ def a_star(grid, h, start, goal):
 def heuristic(position, goal_position):
     return np.linalg.norm(np.array(position) - np.array(goal_position))
 
+def prune_path(path, grid):
+    pruned_path = [p for p in path]
+
+    finished_prunning = False
+    while not finished_prunning:
+        prunned = False
+        for i in range(len(pruned_path) - 2):
+            p1 = pruned_path[i]
+            p2 = pruned_path[i+1]
+            p3 = pruned_path[i+2]
+
+            # If can go directly from p1 to p3, then p2 is not required
+            if _is_collision_free(p1, p3, grid):
+                pruned_path.remove(p2)
+                prunned = True
+                break
+        finished_prunning = not prunned
+
+    return pruned_path
+
+def _is_collision_free(p1, p2, grid):
+    # Compute cells covered by the line p1-p2 using the Bresenham algorithm
+    covered_cells = list(bresenham(p1[0], p1[1], p2[0], p2[1]))
+
+    # Check if any of the cells is an obstacle cell
+    for cell in covered_cells:
+        if grid[cell[0], cell[1]]:
+            return False
+    return True

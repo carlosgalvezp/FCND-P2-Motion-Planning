@@ -6,7 +6,7 @@ from enum import Enum, auto
 
 import numpy as np
 
-from planning_utils import a_star, heuristic, create_grid
+from planning_utils import a_star, heuristic, create_grid, prune_path
 from udacidrone import Drone
 from udacidrone.connection import MavlinkConnection
 from udacidrone.messaging import MsgID
@@ -165,10 +165,18 @@ class MotionPlanning(Drone):
 
         # Run A* to find a path from start to goal
         print('Local Start and Goal: ', grid_start, grid_goal)
+        print('Planning, please wait...')
+        t1 = time.time()
         path, _ = a_star(grid, heuristic, grid_start, grid_goal)
+        print('Planning took {} seconds'.format(time.time() - t1))
+        print('Number of waypoints: {}'.format(len(path)))
 
-        # TODO: prune path to minimize number of waypoints
-        # TODO (if you're feeling ambitious): Try a different approach altogether!
+        # Prune path to minimize number of waypoints
+        print('Pruning path, please wait...')
+        t1 = time.time()
+        path = prune_path(path, grid)
+        print('Prunning took {} seconds'.format(time.time() - t1))
+        print('Number of waypoints: {}'.format(len(path)))
 
         # Convert path to waypoints
         waypoints = [[p[0] + north_offset, p[1] + east_offset, TARGET_ALTITUDE, 0] for p in path]
@@ -176,7 +184,7 @@ class MotionPlanning(Drone):
         # Set self.waypoints
         self.waypoints = waypoints
 
-        # TODO: send waypoints to sim (this is just for visualization of waypoints)
+        # Send waypoints to sim (this is just for visualization of waypoints)
         self.send_waypoints()
 
     def start(self):
