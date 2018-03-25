@@ -205,9 +205,59 @@ def valid_actions(grid, current_node):
 These modifications are enough to extend A* with diagonal motion.
 
 #### 6. Cull waypoints
-For this step you can use a collinearity test or ray tracing method like Bresenham. The idea is simply to prune your path of unnecessary waypoints. Explain the code you used to accomplish this step.
+The last step is to prune the path to remove unnecessary points to have a smoother
+flight. This is implemented in the `prune_path` function, in `planning_utils.py`:
 
+```
+def prune_path(path, grid):
+    pruned_path = [p for p in path]
 
+    finished_prunning = False
+    while not finished_prunning:
+        prunned = False
+        for i in range(len(pruned_path) - 2):
+            p1 = pruned_path[i]
+            p2 = pruned_path[i+1]
+            p3 = pruned_path[i+2]
+
+            # If can go directly from p1 to p3, then p2 is not required
+            if _is_collision_free(p1, p3, grid):
+                pruned_path.remove(p2)
+                prunned = True
+                break
+        finished_prunning = not prunned
+
+    return pruned_path
+```
+
+Basically, we loop over the original path and take 3 points at a time,
+`p1`, `p2` and `p3`. If it's possible to go on a straight line between
+`p1` and `p3` without crossing any obstacle, it means `p2` is unnecessary,
+and thus we remove it from the original path.
+
+To check if there's a collision-free trajectory between two points, we implement
+the function `_is_collision_free`:
+
+```
+def _is_collision_free(p1, p2, grid):
+    # Compute cells covered by the line p1-p2 using the Bresenham algorithm
+    covered_cells = list(bresenham(p1[0], p1[1], p2[0], p2[1]))
+
+    # Check if any of the cells is an obstacle cell
+    for cell in covered_cells:
+        if grid[cell[0], cell[1]]:
+            return False
+    return True
+```
+
+Here we use the Bresenham algorithm (`bresenham` Python package) to extract
+a list of cells that are covered by the line between `p1` and `p2`.
+Finally, we loop over that list of cells to check if any of them lies on
+an obstacle in the grid. If it does, we return immediately and decide
+that the trajectory between `p1` and `p2` is NOT collision-free.
+
+The implemented prunning algorithm significantly reduces the number of waypoints:
+from 621 to 14, making the flight much smoother and faster.
 
 ### Execute the flight
 #### 1. Does it work?
