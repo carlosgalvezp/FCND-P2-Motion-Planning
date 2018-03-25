@@ -179,7 +179,17 @@ class MotionPlanning(Drone):
         print('Number of waypoints: {}'.format(len(path)))
 
         # Convert path to waypoints
-        waypoints = [[p[0] + north_offset, p[1] + east_offset, TARGET_ALTITUDE, 0] for p in path]
+        waypoints = []
+        for i in range(len(path)):
+            px = path[i][0] + north_offset
+            py = path[i][1] + east_offset
+            pz = TARGET_ALTITUDE
+
+            px_prev = path[max(i-1, 0)][0] + north_offset
+            py_prev = path[max(i-1, 0)][1] + east_offset
+
+            yaw = np.arctan2(py - py_prev, px - px_prev)
+            waypoints.append([px, py, pz, yaw])
 
         # Set self.waypoints
         self.waypoints = waypoints
