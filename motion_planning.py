@@ -122,7 +122,7 @@ class MotionPlanning(Drone):
 
         self.target_position[2] = TARGET_ALTITUDE
 
-        # Read lat0, lon0 from colliders into floating point values
+        # TODO: read lat0, lon0 from colliders into floating point values
         lat0 = 0.0
         lon0 = 0.0
         with open(COLLIDERS_CSV, 'r') as csv_file:
@@ -130,7 +130,7 @@ class MotionPlanning(Drone):
             lat0 = float(first_line[0].strip().split(' ')[1])
             lon0 = float(first_line[1].strip().split(' ')[1])
 
-        # Set home position to (lon0, lat0, 0)
+        # TODO: Set home position to (lon0, lat0, 0)
         self.set_home_position(lon0, lat0, 0)
 
         # Retrieve current global position
@@ -168,7 +168,7 @@ class MotionPlanning(Drone):
         # Set self.waypoints
         self.waypoints = waypoints
 
-        # Send waypoints to sim
+        # TODO: send waypoints to sim (this is just for visualization of waypoints)
         self.send_waypoints()
 
     def start(self):
