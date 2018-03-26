@@ -1,5 +1,5 @@
 ## Project: 3D Motion Planning
-![Quad Image](./misc/enroute.png)
+[![Submission Video](http://img.youtube.com/vi/DZ2NLhmdjdU/0.jpg)](https://youtu.be/DZ2NLhmdjdU)
 
 ---
 
@@ -58,7 +58,7 @@ You're reading it! Below I describe how I addressed each rubric point and where 
   to execute the trajectory and for visualization.
 
   In the given starter code, the drone is given a start position (it's current position),
-  and a global position, 10 meters forward in X and Y directions. This information
+  and a goal position, 10 meters forward in X and Y directions. This information
   is then passed to the A* planner to find a trajectory in the grid. Since initially
   the A* planner only has 4 actions, and the drone has to go diagonally, the result
   is a zig-zag trajectory. After adding the diagonal motion in the following
@@ -128,7 +128,7 @@ grid_start = (int(local_position[0]) - north_offset,
 Simply, the `local_position` (NED) is cast to int and transformed into the
 local grid coordinate system, by removing the `north_offset` and `east_offset`
 variables which are the minimum north and east coordinates of the grid.
-In other words, a local position of `(nort_offset, east_offset)` would be
+In other words, a local position of `(north_offset, east_offset)` would be
 equivalent to position (0,0) in the grid.
 
 
